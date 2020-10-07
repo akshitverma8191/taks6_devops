@@ -1,0 +1,16 @@
+job("Task6_Job1") {
+description ("Pulls the code from GitHub")
+  scm{
+    github('akshitverma8191/task3_devops','master')
+  }
+  triggers {
+        scm('* * * * *')
+    }
+  steps {
+    shell('''if mkdir /root/DevOpsAL
+    then
+    mkdir /root/DevOpsAL
+    fi
+    sudo cp -rvf * /root/DevOpsAL/''')
+  }
+}
