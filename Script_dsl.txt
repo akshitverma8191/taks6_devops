@@ -23,23 +23,23 @@ description ("This Job is to deploy the code on top of Kubernetes")
     upstream('Task6_Job1','SUCCESS')
     }
     steps {
-      shell('''sudo cd /root/Task6
+      shell('''cd /root/Task6
 sudo ls
-if sudo kubectl get all|grep myhtmlweb
+if kubectl get all|grep myhtmlweb
 then
-sudo kubectl delete all --all
-sudo kubectl delete pvc --all
-sudo kubectl create -f /root/Task6/htmlwebpvc.yml
-sudo kubectl create -f /root/Task6/htmlwebdeployment.yml
+kubectl delete all --all
+kubectl delete pvc --all
+kubectl create -f /root/Task6/htmlwebpvc.yml
+kubectl create -f /root/Task6/htmlwebdeployment.yml
 sleep 10
-sudo kubectl get all
+kubectl get all
 else
-sudo kubectl create -f /root/Task6/htmlwebpvc.yml
-sudo kubectl create -f /root/Task6/htmlwebdeployment.yml
+kubectl create -f /root/Task6/htmlwebpvc.yml
+kubectl create -f /root/Task6/htmlwebdeployment.yml
 sleep 10
-sudo kubectl get all
+kubectl get all
 fi
-sudo kubectl cp /root/Task6/index.html $(sudo kubectl get pod|grep myhtmlweb|awk '{print$1}'):/usr/local/apache2/htdocs/''')
+kubectl cp /root/Task6/index.html $(sudo kubectl get pod|grep myhtmlweb|awk '{print$1}'):/usr/local/apache2/htdocs/''')
     }
 }
 
@@ -59,8 +59,8 @@ fi''')
     }
 }
 
-buildPipelineView('Task6_Build_View1') {
-  title('Task6_Build_View1')
+buildPipelineView('Task6_Build_View2') {
+  title('Task6_Build_View2')
   displayedBuilds(3)
   selectedJob('Task6_Job1')
   showPipelineParameters(true)
