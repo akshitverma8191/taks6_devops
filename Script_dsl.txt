@@ -7,10 +7,53 @@ description ("Pulls the code from GitHub")
         scm('* * * * *')
     }
   steps {
-    shell('''if mkdir /root/DevOpsAL
+    shell('''if mkdir /root/Task6
     then
-    mkdir /root/DevOpsAL
+    mkdir /root/Task6
     fi
-    sudo cp -rvf * /root/DevOpsAL/''')
+    sudo cp -rvf * /root/Task6/''')
   }
 }
+
+
+
+job("Task6_Job2") {
+description ("This Job is to deploy the code on top of Kubernetes")
+  triggers {
+    upstream('Task6_Job1','SUCCESS')
+    }
+    steps {
+      shell('''sudo cd /root/Task6
+sudo ls
+if sudo kubectl get all|grep myhtmlweb
+then
+sudo kubectl delete all --all
+sudo kubectl delete pvc --all
+sudo kubectl create -f /root/Task6/htmlwebpvc.yml
+sudo kubectl create -f /root/Task6/htmlwebdeployment.yml
+sleep 10
+sudo kubectl get all
+else
+sudo kubectl create -f /root/Task6/htmlwebpvc.yml
+sudo kubectl create -f /root/Task6/htmlwebdeployment.yml
+sleep 10
+sudo kubectl get all
+fi
+sudo kubectl cp /root/Task6/index.html $(sudo kubectl get pod|grep myhtmlweb|awk '{print$1}'):/usr/local/apache2/htdocs/''')
+    }
+}
+
+job("Task6_Job3") {
+description ("This job is to test the code")
+  triggers {
+    upstream('Task6_Job3','SUCCESS')
+    }
+    steps {
+      shell('''export status=$(curl -s -o /dev/null -w "%{http_code}" http://192.168.99.103:31000)
+if [ $status -eq 200 ]
+then
+exit 0
+else
+exit 1
+fi''')
+    }
